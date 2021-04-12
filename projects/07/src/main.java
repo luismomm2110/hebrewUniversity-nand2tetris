@@ -16,7 +16,7 @@ public class main {
                 codeWriter.writeArithmetic(parser.arg1());
                 break;
 
-                case 1:
+                case 1, 2:
                 codeWriter.writePushPop(parser.commandType(), parser.arg1(), parser.arg2());
                 System.out.println(parser.commandType() + parser.arg1() + parser.arg2());;
                 break;

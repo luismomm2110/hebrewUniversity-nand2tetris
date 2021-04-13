@@ -75,6 +75,8 @@ public class CodeWriter {
             //push temp
             } else if (segment.equals("temp")) {
                 this.assemblyWriter.write("@R" + Integer.toString(5 + c_index) + "\n" + "D=M\n" + "@SP\n" + "A=M\n" + "M=D\n" +  advSP());
+            } else if (segment.equals("pointer")) {
+                this.assemblyWriter.write("@" + Integer.toString(3 + c_index) + "\n" + "D=M\n" + "@SP\n" + "A=M\n" + "M=D\n" + advSP());
             } else {
                 this.assemblyWriter.write("ERROR IN COMMAND PUSH");
             }
@@ -86,6 +88,9 @@ public class CodeWriter {
                  else if (!chooseSeg(segment, c_index).isBlank()) {
                     this.assemblyWriter.write(chooseSeg(segment, c_index) + "D=A+D\n" + "@adress\n" + "M=D\n" + backSP() + "D=M\n" +
                     "@adress\n" + "A=M\n" + "M=D\n");
+                //pop pointer
+                } else if (segment.equals("pointer")) {
+                    this.assemblyWriter.write(backSP() + "D=M\n" + "@" + Integer.toString(3 + c_index) + "\n" + "M=D\n");
                 } else {
                     this.assemblyWriter.write("ERROR IN COMMAND POP");
                 }

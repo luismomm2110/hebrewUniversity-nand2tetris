@@ -1,8 +1,6 @@
 import java.io.*;
 
 public class CodeWriter {
-
-    
     private static Integer numJump;
     private String pathAssembly;
     private File assemblyTranslate;
@@ -69,14 +67,23 @@ public class CodeWriter {
              //push constant
             if  (segment.equals("constant")) {
                 this.assemblyWriter.write("@" + Integer.toString(c_index) + "\n" + "D=A\n" + "@SP\n" + "A=M\n" + "M=D\n" + advSP());
+            
             //push local, static, this, that
             } else if (!chooseSeg(segment, c_index).isBlank()) {
                 this.assemblyWriter.write(chooseSeg(segment, c_index) + "A=A+D\n" + "D=M\n" + "@SP\n" + "A=M\n" + "M=D\n" + advSP());
+            
             //push temp
             } else if (segment.equals("temp")) {
                 this.assemblyWriter.write("@R" + Integer.toString(5 + c_index) + "\n" + "D=M\n" + "@SP\n" + "A=M\n" + "M=D\n" +  advSP());
+           
+            //push pointer
             } else if (segment.equals("pointer")) {
                 this.assemblyWriter.write("@" + Integer.toString(3 + c_index) + "\n" + "D=M\n" + "@SP\n" + "A=M\n" + "M=D\n" + advSP());
+            
+            //push static
+            } else if (segment.equals("static")){
+                this.assemblyWriter.write(staticName(c_index) + "D=M\n" + "@SP\n" +  "A=M\n" + "M=D\n" + advSP());
+            
             } else {
                 this.assemblyWriter.write("ERROR IN COMMAND PUSH");
             }
@@ -84,13 +91,20 @@ public class CodeWriter {
                 //pop temp
                 if (segment.equals("temp")) {
                     this.assemblyWriter.write(backSP() + "D=M\n" + "@R" + Integer.toString(5 + c_index) + "\n" + "M=D\n");
-                } //pop local, static, this, that
-                 else if (!chooseSeg(segment, c_index).isBlank()) {
-                    this.assemblyWriter.write(chooseSeg(segment, c_index) + "D=A+D\n" + "@adress\n" + "M=D\n" + backSP() + "D=M\n" +
-                    "@adress\n" + "A=M\n" + "M=D\n");
+                 
+                //pop local, static, this, that
+                } else if (!chooseSeg(segment, c_index).isBlank()) {
+                    this.assemblyWriter.write(chooseSeg(segment, c_index) + "D=A+D\n" + "@adress\n" + "M=D\n" + backSP() + "D=M\n" 
+                    + "@adress\n" + "A=M\n" + "M=D\n");
+
                 //pop pointer
                 } else if (segment.equals("pointer")) {
                     this.assemblyWriter.write(backSP() + "D=M\n" + "@" + Integer.toString(3 + c_index) + "\n" + "M=D\n");
+                
+                //pop static
+                } else if (segment.equals("static")) {
+                    this.assemblyWriter.write(backSP() + "D=M\n" + staticName(c_index) + "M=D\n");
+                
                 } else {
                     this.assemblyWriter.write("ERROR IN COMMAND POP");
                 }
@@ -138,6 +152,11 @@ public class CodeWriter {
 
         return this.backSP() + "D=M\n" + backSP() + "D=M-D\n" + "@FALSE" + numJump + "\n" + comparison + "@SP\n" + "A=M\n" + "M=-1\n" + "@CONTINUE" + numJump
          + "\n" + "D;JMP\n" + "(FALSE" + numJump + ")\n" + "@SP\n" + "A=M\n" + "M=0\n" + "(CONTINUE" + numJump + ")\n" + advSP();
+    }
+
+    private String staticName(int index) {
+        String name = this.assemblyTranslate.getName().replace(".asm", ("." + Integer.toString(index)));
+        return "@" + name + "\n";
     }
 
     private String backSP () {

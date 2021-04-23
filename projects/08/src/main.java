@@ -9,7 +9,6 @@ public class main {
 
          while (parser.hasMoreCommands()) {
             parser.advance();
-            System.out.println(parser.commandType() + " " + parser.arg1());
 
             switch (parser.commandType())  {
                 
@@ -24,9 +23,20 @@ public class main {
                 case 3:
                 codeWriter.writeLabel(parser.arg1());
                 break;
+                
+                case 4:
+                codeWriter.writeGoTo(parser.arg1());
 
                 case 5:
                 codeWriter.writeIf(parser.arg1());
+                break;
+
+                case 6: 
+                codeWriter.writeFunction(parser.arg1(), parser.arg2());
+                break;
+
+                case 7:
+                codeWriter.writeReturn();
                 break;
 
                 default:

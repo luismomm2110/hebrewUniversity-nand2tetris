@@ -20,7 +20,8 @@ public class CodeWriter {
 
     public void writeArithmetic(String arg1) throws IOException {
 
-        this.assemblyWriter.write("//" +  arg1 + "\n");
+        this.writeComment(arg1, "", "");
+
         if (arg1.equals("add")) {
             this.assemblyWriter.write(backSP() + "M=D\n" + backSP() + "M=M+D\n" + advSP());
         }
@@ -61,7 +62,15 @@ public class CodeWriter {
 
     public void writePushPop(int command, String segment, int c_index) throws IOException {
 
-        this.assemblyWriter.write("//" + Integer.toString(command) + " " + segment + " " + Integer.toString(c_index) + "\n");
+        String textCom;
+
+        if (command == 1) {
+            textCom = "push";
+        } else {
+            textCom = "pop";
+        }
+
+        this.writeComment(textCom, segment, Integer.toString(c_index));
 
         if (command == 1) {
              //push constant
@@ -112,11 +121,63 @@ public class CodeWriter {
     }
     
     public void writeLabel(String label) throws IOException {
+        this.writeComment("(" + label + ")", "", "");
+
         this.assemblyWriter.write("(" + label + ")\n");
     }
 
     public void writeIf(String label) throws IOException {
+        this.writeComment("if-goto(" + label + ")", "", "");
+
         this.assemblyWriter.write(backSP() + "@" + label + "\n" +  "D;JGT\n");
+    }
+
+    public void writeGoTo(String label) throws IOException {
+        this.writeComment("goto(" + label + ")", "", "");
+
+        this.assemblyWriter.write(backSP() + "@" + label + "\n" + "0;JMP\n");
+    }
+
+    public void writeFunction(String functionName, int numLocals) throws IOException {
+        this.writeComment("function", functionName, Integer.toString(numLocals));
+        
+        this.assemblyWriter.write("@" + Integer.toString(numLocals) + "\n" + "D=A\n" + "@SP\n" + "M=M+D\n");
+    }
+
+    public void writeReturn() throws IOException {
+        this.writeComment("(return)", "", "");
+        
+        this.assemblyWriter.write(segReturn("varReturn")); //return in local -7 the last value stored in stack
+        this.assemblyWriter.write(segReturn("@SP"));
+        this.assemblyWriter.write(segReturn("@THAT"));
+        this.assemblyWriter.write(segReturn("@THIS"));
+        this.assemblyWriter.write(segReturn("@ARG"));
+        this.assemblyWriter.write(segReturn("@LCL"));
+    }
+
+    private String segReturn(String segment) {
+        
+        int numBack;
+        
+        if (segment == "varReturn") {
+            return ("@LCL\n" + "D=M\n" + "@7\n" + "D=D-A\n" + "@tempReturn\n" + "M=D\n" + backSP() + "D=M\n" + "@tempReturn\n" + "A=M\n" 
+            + "M=D\n");
+        } else if (segment == "@THAT") {
+            numBack = 1;
+        } else if (segment == "@THIS") {
+            numBack = 2;
+        } else if (segment == "@ARG") {
+            numBack = 3;
+        }  else if (segment == "@SP") {
+            return ("@LCL\n" + "D=M\n" + "@6\n" + "D=D-A\n" + "@SP\n" + "M=D\n");
+        } else if (segment == "@LCL") {
+            numBack = 4;
+        } else {
+            return "error in helper return";
+        }
+
+        return ("@LCL\n" + "D=M\n" + "@" + Integer.toString(numBack) + "\n" + "D=D-A\n" + "A=D\n" + "D=M\n" + segment + "\n" + "M=D\n");
+
     }
 
     private String chooseSeg(String segment, int c_index) {
@@ -173,6 +234,10 @@ public class CodeWriter {
 
     private String advSP() {
         return "@SP\n" + "M=M+1\n";
+    }
+
+    private void writeComment(String e1, String e2, String e3) throws IOException {
+            this.assemblyWriter.write("// " + e1 + " " + e2 + " " + e3 +"\n");
     }
 
     public void close() throws IOException {

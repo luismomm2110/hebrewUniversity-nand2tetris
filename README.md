@@ -9,6 +9,7 @@ This project contains some solutions of  "The Elements of Computing Systems" fro
 
 ## Present until now: 
 - Part 05
+- Part 06
 - Part 07
 
 I intend do from part 5 to 12 ;)

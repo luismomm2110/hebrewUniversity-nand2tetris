@@ -11,4 +11,4 @@ This project contains some solutions of  "The Elements of Computing Systems" fro
 - Part 05
 - Part 07
 
-I indent do from part 5 to 12 ;)
+I intend do from part 5 to 12 ;)

@@ -81,11 +81,11 @@ public class CodeWriter {
     }
 
     public void writeLabel(String segment) throws IOException {
-        this.assemblyWriter.write("($null" + segment + ")\n");
+        this.assemblyWriter.write("(null$" + segment + ")\n");
     }
 
     public void writeIf(String segment) throws IOException {
-        this.assemblyWriter.write("@SP\n" + "M=M-1\n" + "A=M\n" + "@null$" + segment + "\n" + "D;JME\n");
+        this.assemblyWriter.write("@SP\n" + "M=M-1\n" + "A=M\n" + "@null$" + segment + "\n" + "D;JNE\n");
     }
 
     public void writeGo(String segment) throws IOException {
@@ -188,6 +188,11 @@ public class CodeWriter {
         if (segment.equals("pointer")) {
             this.assemblyWriter
                     .write(backSP() + "D=M\n" + "@" + Integer.toString(c_index + 3) + "\n" + "M=D\n");
+            return;
+        }
+
+        if (segment.equals("static")) {
+            this.assemblyWriter.write(backSP() + "D=M\n" + staticName(c_index) + "M=D\n");
             return;
         }
 

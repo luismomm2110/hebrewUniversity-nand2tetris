@@ -1,0 +1,10 @@
+push constant = joga o numero da constante para o stack
+
+pop pointer 0 = coloca o valor atual do stack no this (3) e descen
+
+pop pointer 1 xxxx = coloca o valor atual do stack no that (4) e desce
+
+pop this xx = coloca top do stack no valor que está no this + 2
+
+
+push pointer 0 = coloca valor do this no stack 

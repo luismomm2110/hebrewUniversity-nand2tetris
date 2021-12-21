@@ -39,12 +39,13 @@ M=M+1
 D=M
 @2
 D=A+D
-@adress
+@R13
 M=D
 @SP
 AM=M-1
-D=M
-@adress
+A=M
+D=A
+@R13
 A=M
 M=D
 //1 constant 46
@@ -60,12 +61,13 @@ M=M+1
 D=M
 @6
 D=A+D
-@adress
+@R13
 M=D
 @SP
 AM=M-1
-D=M
-@adress
+A=M
+D=A
+@R13
 A=M
 M=D
 //1 pointer 0

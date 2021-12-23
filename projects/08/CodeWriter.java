@@ -92,6 +92,23 @@ public class CodeWriter {
         this.assemblyWriter.write("@null$" + segment + "\n" + "0;JMP\n");
     }
 
+    public void writeFunction(String nameFunction, int localVariables) throws IOException {
+        int i = 0;
+        this.assemblyWriter.write("(" + nameFunction + ")\n");
+
+        while (i < localVariables) {
+            this.assemblyWriter.write("@LCL\n" + "D=A\n" + "@" + i + "\n" + "D=D+A\n" + "A=D\n" + "M=0\n");
+            i++;
+        }
+    }
+
+    public void writeReturn() throws IOException {
+        this.assemblyWriter.write("//return\n");
+        this.assemblyWriter.write("@LCL\n" + "D=A\n" + "@R14\n" + "M=D\n");
+        this.assemblyWriter.write("@ARG\n" + "D=M\n" + "@R13\n" + "M=D\n");
+        this.assemblyWriter.write("@R14\n" + "D=M\n" + "@1\n" + "D=D-A\n" + "@1\n" + "M=D\n");
+    }
+
     private String chooseSeg(String segment, int c_index) {
         String seg = "";
 

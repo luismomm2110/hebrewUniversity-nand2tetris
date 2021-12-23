@@ -101,7 +101,7 @@ class Parser {
     public String arg1() {
 
         if (this.commandType() == RETURN) {
-            throw new IllegalStateException("RETURN command!");
+            return "RETURN";
         } else if (this.commandType() == ARITHMETIC) {
             return this.currentCommand[0];
         } else {
